@@ -3,35 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой бесплатный сайт</title>
+    <title>Анонимные сообщения</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Добро пожаловать на мой сайт!</h1>
-            <p>Работает на GitHub Pages + Supabase</p>
+            <h1>📩 Анонимные письма</h1>
+            <p>Напиши мне что угодно — письмо прилетит на почту и сохранится в базу!</p>
         </header>
 
         <main>
-            <!-- Блок для ввода данных (функционал) -->
+            <!-- Блок отправки -->
             <section class="card">
-                <h2>Оставить запись в базе данных</h2>
-                <input type="text" id="userInput" placeholder="Введи любой текст или задачу...">
-                <button id="saveBtn">Сохранить</button>
+                <h2>Написать анонимку:</h2>
+                <textarea id="msgInput" placeholder="Введи свое сообщение здесь..."></textarea>
+                <button id="sendBtn">Отправить анонимно</button>
+                <p id="statusText"></p>
             </section>
 
-            <!-- Блок вывода данных -->
-            <section class="card">
-                <h2>Список записей из базы:</h2>
-                <ul id="dataList">
-                    <li>Загрузка данных...</li>
+            <!-- Кнопка входа для тебя -->
+            <section class="card admin-login-card">
+                <button id="adminBtn" class="secondary-btn">🔐 Войти и прочитать архив</button>
+            </section>
+
+            <!-- Архив писем (скрыт, пока не введешь пароль) -->
+            <section id="adminPanel" class="card hidden">
+                <h2>📬 Архив писем (Видно только тебе):</h2>
+                <ul id="messagesList">
+                    <li>Загрузка...</li>
                 </ul>
             </section>
         </main>
     </div>
 
-    <!-- Подключаем библиотеку Supabase для работы с базой данных -->
+    <!-- Библиотека Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 </body>

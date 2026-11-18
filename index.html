@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой бесплатный сайт</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Добро пожаловать на мой сайт!</h1>
+            <p>Работает на GitHub Pages + Supabase</p>
+        </header>
+
+        <main>
+            <!-- Блок для ввода данных (функционал) -->
+            <section class="card">
+                <h2>Оставить запись в базе данных</h2>
+                <input type="text" id="userInput" placeholder="Введи любой текст или задачу...">
+                <button id="saveBtn">Сохранить</button>
+            </section>
+
+            <!-- Блок вывода данных -->
+            <section class="card">
+                <h2>Список записей из базы:</h2>
+                <ul id="dataList">
+                    <li>Загрузка данных...</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <!-- Подключаем библиотеку Supabase для работы с базой данных -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>

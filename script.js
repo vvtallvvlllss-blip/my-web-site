@@ -1,5 +1,5 @@
 // Вставь свой ключ от Web3Forms внутрь кавычек:
-const WEB3FORMS_KEY = '// sb_publishable-wRYTccHBao6SA-1doR3EjA_dLQJThRH:
+const WEB3FORMS_KEY = 'sb_publishable-wRYTccHBao6SA-1doR3EjA_dLQJThRH'
 const WEB3FORMS_KEY = '65e6fd07-0b65-465b-b3c1-dc2b74608680';
 
 // 1. Переключение вкладок меню

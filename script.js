@@ -1,34 +1,55 @@
-// 1. Твои данные из Supabase (для сохранения архива в базу)
-const SUPABASE_URL = 'https://srakvhmbskiplvtggsly.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_wRYTccHBao6SA-ldoR3EjA_dLQJThRH';
-
-// 2. Твой ключ от Web3Forms (чтобы письма летели на почту)
+// Вставь свой ключ от Web3Forms внутрь кавычек:
+const WEB3FORMS_KEY = '// sb_publishable-wRYTccHBao6SA-1doR3EjA_dLQJThRH:
 const WEB3FORMS_KEY = '65e6fd07-0b65-465b-b3c1-dc2b74608680';
 
-const { createClient } = supabase;
-const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// 1. Переключение вкладок меню
+const navBtns = document.querySelectorAll('.nav-btn');
+const tabContents = document.querySelectorAll('.tab-content');
 
+navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        navBtns.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(tab => tab.classList.remove('active'));
+
+        btn.classList.add('active');
+        const targetId = btn.getAttribute('data-tab');
+        document.getElementById(targetId).classList.add('active');
+    });
+});
+
+// 2. Счётчик символов
 const msgInput = document.getElementById('msgInput');
-const sendBtn = document.getElementById('sendBtn');
-const statusText = document.getElementById('statusText');
-const adminBtn = document.getElementById('adminBtn');
-const adminPanel = document.getElementById('adminPanel');
-const messagesList = document.getElementById('messagesList');
+const charCount = document.getElementById('charCount');
 
-// Отправка: дублирует письмо на почту И сохраняет в базу Supabase
+msgInput.addEventListener('input', () => {
+    charCount.textContent = `${msgInput.value.length} / 500`;
+});
+
+// 3. Отправка анонимного письма на почту
+const sendBtn = document.getElementById('sendBtn');
+const statusBox = document.getElementById('statusBox');
+
+function showStatus(text, type) {
+    statusBox.textContent = text;
+    statusBox.className = `status-box ${type}`;
+    setTimeout(() => {
+        statusBox.classList.add('hidden');
+    }, 4500);
+}
+
 sendBtn.addEventListener('click', async () => {
     const text = msgInput.value.trim();
     if (!text) {
-        statusText.textContent = 'Напиши текст сообщения!';
+        showStatus('⚠️ Напиши текст перед отправкой!', 'error');
         return;
     }
 
     sendBtn.disabled = true;
-    statusText.textContent = 'Отправка...';
+    const originalBtnHTML = sendBtn.innerHTML;
+    sendBtn.innerHTML = '<span>Отправляем...</span>';
 
     try {
-        // Отправка на почту через Web3Forms
-        const mailResponse = await fetch('https://api.web3forms.com/submit', {
+        const response = await fetch('https://api.web3forms.com/submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -37,64 +58,102 @@ sendBtn.addEventListener('click', async () => {
             body: JSON.stringify({
                 access_key: WEB3FORMS_KEY,
                 subject: '📩 Новое анонимное письмо с сайта!',
+                from_name: 'Анонимный отправитель',
                 message: text
             })
         });
-        const mailResult = await mailResponse.json();
 
-        // Сохранение в базу данных Supabase
-        const { error: dbError } = await _supabase
-            .from('anon_messages')
-            .insert([{ message: text }]);
+        const result = await response.json();
 
-        if (mailResult.success && !dbError) {
-            statusText.textContent = '✅ Письмо отправлено на почту и сохранено!';
+        if (result.success) {
+            showStatus('✅ Письмо отправлено! Автор получит его на почту.', 'success');
             msgInput.value = '';
+            charCount.textContent = '0 / 500';
         } else {
-            statusText.textContent = '⚠️ Отправлено, но произошла ошибка при сохранении.';
+            showStatus('❌ Не удалось отправить. Проверь ключ Web3Forms.', 'error');
         }
-    } catch (err) {
-        statusText.textContent = '❌ Ошибка сети. Попробуй еще раз.';
+    } catch (error) {
+        showStatus('❌ Ошибка сети. Проверь интернет и попробуй снова.', 'error');
     }
 
     sendBtn.disabled = false;
-    setTimeout(() => { statusText.textContent = ''; }, 4000);
-});
+    sendBtn.innerHTML = originalBtnHTML;
+});';
 
-// Кнопка входа для тебя (пароль '1234', можешь изменить ниже)
-adminBtn.addEventListener('click', async () => {
-    const password = prompt('Введите секретный пароль:');
-    
-    if (password === '1234') { 
-        adminPanel.classList.remove('hidden');
-        adminBtn.style.display = 'none';
-        fetchMessages();
-    } else {
-        alert('Неверный пароль!');
-    }
-});
+// 1. Переключение вкладок меню
+const navBtns = document.querySelectorAll('.nav-btn');
+const tabContents = document.querySelectorAll('.tab-content');
 
-// Загрузка истории писем из базы Supabase (чтобы читать только ты)
-async function fetchMessages() {
-    const { data, error } = await _supabase
-        .from('anon_messages')
-        .select('*')
-        .order('id', { ascending: false });
+navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        navBtns.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(tab => tab.classList.remove('active'));
 
-    if (error) {
-        messagesList.innerHTML = '<li>Ошибка загрузки базы данных</li>';
-        return;
-    }
-
-    messagesList.innerHTML = '';
-    if (data.length === 0) {
-        messagesList.innerHTML = '<li>Пока нет ни одного сообщения</li>';
-        return;
-    }
-
-    data.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = item.message;
-        messagesList.appendChild(li);
+        btn.classList.add('active');
+        const targetId = btn.getAttribute('data-tab');
+        document.getElementById(targetId).classList.add('active');
     });
+});
+
+// 2. Счётчик символов
+const msgInput = document.getElementById('msgInput');
+const charCount = document.getElementById('charCount');
+
+msgInput.addEventListener('input', () => {
+    charCount.textContent = `${msgInput.value.length} / 500`;
+});
+
+// 3. Отправка анонимного письма на почту
+const sendBtn = document.getElementById('sendBtn');
+const statusBox = document.getElementById('statusBox');
+
+function showStatus(text, type) {
+    statusBox.textContent = text;
+    statusBox.className = `status-box ${type}`;
+    setTimeout(() => {
+        statusBox.classList.add('hidden');
+    }, 4500);
 }
+
+sendBtn.addEventListener('click', async () => {
+    const text = msgInput.value.trim();
+    if (!text) {
+        showStatus('⚠️ Напиши текст перед отправкой!', 'error');
+        return;
+    }
+
+    sendBtn.disabled = true;
+    const originalBtnHTML = sendBtn.innerHTML;
+    sendBtn.innerHTML = '<span>Отправляем...</span>';
+
+    try {
+        const response = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                access_key: WEB3FORMS_KEY,
+                subject: '📩 Новое анонимное письмо с сайта!',
+                from_name: 'Анонимный отправитель',
+                message: text
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showStatus('✅ Письмо отправлено! Автор получит его на почту.', 'success');
+            msgInput.value = '';
+            charCount.textContent = '0 / 500';
+        } else {
+            showStatus('❌ Не удалось отправить. Проверь ключ Web3Forms.', 'error');
+        }
+    } catch (error) {
+        showStatus('❌ Ошибка сети. Проверь интернет и попробуй снова.', 'error');
+    }
+
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = originalBtnHTML;
+});
